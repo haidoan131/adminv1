@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import FlexBetween from "components/FlexBetween";
 import Header from "components/Header";
 import {
@@ -14,6 +14,13 @@ import {
   Typography,
   useTheme,
   useMediaQuery,
+  Modal,
+  Input ,
+  TextField, 
+  FormControl,
+  InputLabel,
+  OutlinedInput,
+  InputAdornment
 } from "@mui/material";
 import { DataGrid } from "@mui/x-data-grid";
 import BreakdownChart from "components/BreakdownChart";
@@ -22,45 +29,89 @@ import { useGetDashboardQuery } from "state/api";
 import StatBox from "components/StatBox";
 import MyChart from "components/MyChart";
 import MyChart2 from "components/MyChart2";
+import { getAlll, getAlll1, deleteStudent, addStudent, resetStatusAndMessage, editStudent ,searchByName,searchByYear,searchStudentsXepLoai,searchAll} from '../../redux/studentSlice';
+import { useDispatch, useSelector } from 'react-redux';
+import ReactPaginate from 'react-paginate';
 
 const Dashboard = () => {
   const theme = useTheme();
   const isNonMediumScreens = useMediaQuery("(min-width: 1200px)");
   const { data, isLoading } = useGetDashboardQuery();
+  const [currentPage, setCurrentPage] = useState(0)
+  const limit = 6
+  const { totalPages, students } = useSelector((state) => state.student);
+  console.log(students)
+  const dispatch = useDispatch();
+  useEffect(() => {
+    // dispatch(getAlll({ currentPage, limit }))
+}, [currentPage])
+useEffect(()=>{
+  dispatch(getAlll1())
+},[dispatch])
 
-  const columns = [
-    {
-      field: "_id",
-      headerName: "ID",
-      flex: 1,
-    },
-    {
-      field: "userId",
-      headerName: "User ID",
-      flex: 1,
-    },
-    {
-      field: "createdAt",
-      headerName: "CreatedAt",
-      flex: 1,
-    },
-    {
-      field: "products",
-      headerName: "# of Products",
-      flex: 0.5,
-      sortable: false,
-      renderCell: (params) => params.value.length,
-    },
-    {
-      field: "cost",
-      headerName: "Cost",
-      flex: 1,
-      renderCell: (params) => `$${Number(params.value).toFixed(2)}`,
-    },
+const handlePageClick = (event) => {
+  setCurrentPage(event.selected)
+}
+const columns = [
+  { field: 'id', headerName: 'ID', width: 90 },
+  { field: 'name', headerName: 'Name', width: 150 },
+  // Thêm các cột khác nếu cần
+];
+
+  const rows = [
+    { id: 1, lastName: 'Snow', firstName: 'Jon', age: 35 },
+    { id: 2, lastName: 'Lannister', firstName: 'Cersei', age: 42 },
+    { id: 3, lastName: 'Lannister', firstName: 'Jaime', age: 45 },
+    { id: 4, lastName: 'Targaryen', firstName: 'Daenerys', age: null },
+    { id: 5, lastName: 'Stark', firstName: 'Arya', age: 16 },
+    { id: 6, lastName: 'Targaryen', firstName: 'Cersei', age: 30 },
+    { id: 7, lastName: 'Stark', firstName: 'Sansa', age: 23 },
   ];
-
+  //modal
+  const [open, setOpen] = React.useState(false);
+  const handleOpen = () => setOpen(true);
+  const handleClose = () => setOpen(false);
+  
+const style = {
+  position: 'absolute',
+  top: '50%',
+  left: '50%',
+  transform: 'translate(-50%, -50%)',
+  width: 400,
+  bgcolor: 'background.paper',
+  border: '2px solid #000',
+  boxShadow: 24,
+  p: 4,
+};
+const [name, setName] = useState('');
+const handleChange1 = (event) => {
+  setName(event.target.value);
+  
+};
+console.log(name)
   return (
     <Box m="1.5rem 2.5rem">
+      <Modal
+        open={open}
+        onClose={handleClose}
+        aria-labelledby="modal-modal-title"
+        aria-describedby="modal-modal-description"
+      >
+        <Box sx={style}>
+        <TextField fullWidth sx={{ m: 1 }} id="outlined-basic" label="name" variant="outlined"  value={name}
+        onChange={handleChange1} />
+<TextField fullWidth sx={{ m: 1 }} id="outlined-basic" label="name" variant="outlined"  value={name}
+        onChange={handleChange1} />
+        <TextField fullWidth sx={{ m: 1 }} id="outlined-basic" label="name" variant="outlined"  value={name}
+        onChange={handleChange1} />
+        <TextField fullWidth sx={{ m: 1 }} id="outlined-basic" label="name" variant="outlined"  value={name}
+        onChange={handleChange1} />
+        <TextField fullWidth sx={{ m: 1 }} id="outlined-basic" label="name" variant="outlined"  value={name}
+        onChange={handleChange1} />
+      
+        </Box>
+
+      </Modal>
       <FlexBetween>
         <Header title="DASHBOARD" subtitle="Welcome to your dashboard" />
 
@@ -78,6 +129,9 @@ const Dashboard = () => {
             Download Reports
           </Button>
         </Box>
+        <Button variant="contained" color="success" onClick={handleOpen}>
+        thêm
+      </Button>
       </FlexBetween>
 
       <Box
@@ -177,12 +231,15 @@ const Dashboard = () => {
             },
           }}
         >
-          <DataGrid
-            loading={isLoading || !data}
-            getRowId={(row) => row._id}
-            rows={(data && data.transactions) || []}
-            columns={columns}
-          />
+       
+       <DataGrid
+        rows={students} // Dữ liệu từ Redux
+        columns={columns}
+        pageSize={4}
+        rowsPerPageOptions={[5]}
+        checkboxSelection
+      />
+
         </Box>
         <Box
           gridColumn="span 4"

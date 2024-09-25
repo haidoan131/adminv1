@@ -34,6 +34,7 @@ import { useLocation, useNavigate } from "react-router-dom";
 import FlexBetween from "./FlexBetween";
 import profileImage from "assets/profile.jpeg";
 import logo from "assets/CACA3462-A74C-48A6-A2E6-F18F201773E1 (1).webp";
+import CategoryIcon from '@mui/icons-material/Category';
 const navItems = [
   {
     text: "Dashboard",
@@ -42,6 +43,10 @@ const navItems = [
   {
     text: "Client Facing",
     icon: null,
+  },
+  {
+    text: "Categories",
+    icon: <CategoryIcon />,
   },
   {
     text: "Products",

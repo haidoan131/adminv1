@@ -16,6 +16,7 @@ import Monthly from "scenes/monthly";
 import Breakdown from "scenes/breakdown";
 import Admin from "scenes/admin";
 import Performance from "scenes/performance";
+import Cate from "scenes/categories";
 
 function App() {
  const mode = useSelector((state) => state.global.mode);
@@ -28,6 +29,8 @@ function App() {
           <Routes>
             <Route element={<Layout />}>
               <Route path="/" element={<Navigate to="/dashboard" replace />} />
+              
+              <Route path="/categories" element={<Cate />} />
               <Route path="/dashboard" element={<Dashboard />} />
               <Route path="/products" element={<Products />} />
               <Route path="/customers" element={<Customers />} />

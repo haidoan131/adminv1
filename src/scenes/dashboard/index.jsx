@@ -39,15 +39,15 @@ const Dashboard = () => {
   const { data, isLoading } = useGetDashboardQuery();
   const [currentPage, setCurrentPage] = useState(0)
   const limit = 6
-  const { totalPages, students } = useSelector((state) => state.student);
-  console.log(students)
+
+
   const dispatch = useDispatch();
-  useEffect(() => {
-    // dispatch(getAlll({ currentPage, limit }))
-}, [currentPage])
-useEffect(()=>{
-  dispatch(getAlll1())
-},[dispatch])
+//   useEffect(() => {
+//     // dispatch(getAlll({ currentPage, limit }))
+// }, [currentPage])
+// useEffect(()=>{
+//   dispatch(getAlll1())
+// },[dispatch])
 
 const handlePageClick = (event) => {
   setCurrentPage(event.selected)
@@ -68,50 +68,13 @@ const columns = [
     { id: 7, lastName: 'Stark', firstName: 'Sansa', age: 23 },
   ];
   //modal
-  const [open, setOpen] = React.useState(false);
-  const handleOpen = () => setOpen(true);
-  const handleClose = () => setOpen(false);
-  
-const style = {
-  position: 'absolute',
-  top: '50%',
-  left: '50%',
-  transform: 'translate(-50%, -50%)',
-  width: 400,
-  bgcolor: 'background.paper',
-  border: '2px solid #000',
-  boxShadow: 24,
-  p: 4,
-};
-const [name, setName] = useState('');
-const handleChange1 = (event) => {
-  setName(event.target.value);
-  
-};
-console.log(name)
+ 
+
+
+
   return (
     <Box m="1.5rem 2.5rem">
-      <Modal
-        open={open}
-        onClose={handleClose}
-        aria-labelledby="modal-modal-title"
-        aria-describedby="modal-modal-description"
-      >
-        <Box sx={style}>
-        <TextField fullWidth sx={{ m: 1 }} id="outlined-basic" label="name" variant="outlined"  value={name}
-        onChange={handleChange1} />
-<TextField fullWidth sx={{ m: 1 }} id="outlined-basic" label="name" variant="outlined"  value={name}
-        onChange={handleChange1} />
-        <TextField fullWidth sx={{ m: 1 }} id="outlined-basic" label="name" variant="outlined"  value={name}
-        onChange={handleChange1} />
-        <TextField fullWidth sx={{ m: 1 }} id="outlined-basic" label="name" variant="outlined"  value={name}
-        onChange={handleChange1} />
-        <TextField fullWidth sx={{ m: 1 }} id="outlined-basic" label="name" variant="outlined"  value={name}
-        onChange={handleChange1} />
-      
-        </Box>
-
-      </Modal>
+    
       <FlexBetween>
         <Header title="DASHBOARD" subtitle="Welcome to your dashboard" />
 
@@ -129,9 +92,7 @@ console.log(name)
             Download Reports
           </Button>
         </Box>
-        <Button variant="contained" color="success" onClick={handleOpen}>
-        thêm
-      </Button>
+    
       </FlexBetween>
 
       <Box
@@ -232,13 +193,7 @@ console.log(name)
           }}
         >
        
-       <DataGrid
-        rows={students} // Dữ liệu từ Redux
-        columns={columns}
-        pageSize={4}
-        rowsPerPageOptions={[5]}
-        checkboxSelection
-      />
+    
 
         </Box>
         <Box

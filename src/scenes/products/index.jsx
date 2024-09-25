@@ -10,9 +10,11 @@ import {
   Rating,
   useTheme,
   useMediaQuery,
+  Paper,
 } from "@mui/material";
 import Header from "components/Header";
 import { useGetProductsQuery } from "state/api";
+import { DataGrid } from "@mui/x-data-grid";
 
 const Product = ({
   _id,
@@ -88,50 +90,36 @@ const Product = ({
 const Products = () => {
   const { data, isLoading } = useGetProductsQuery();
   const isNonMobile = useMediaQuery("(min-width: 1000px)");
-
+  const columns = [
+    { field: 'id', headerName: 'ID',  flex: 1,},
+    { field: 'name', headerName: 'Name', width: 150, flex: 1, },
+    { field: 'name2', headerName: 'Price', width: 150, flex: 1, },
+    { field: 'name1', headerName: 'category', width: 150, flex: 1, },
+    { field: 'name3', headerName: 'image', width: 150, flex: 1, },
+  ];
+  const rows = [
+    { id: 1, name: 'Snow'},
+    { id: 2, name: 'Lannister'},
+    { id: 3, name: 'Lannister'},
+    { id: 4, name: 'Targaryen' },
+    { id: 5, name: 'Stark' },
+    { id: 6, name: 'Targaryen' },
+    { id: 7, name: 'Stark'},
+  ];
+const paginationModel = { page: 0, pageSize: 5 };
   return (
     <Box m="1.5rem 2.5rem">
-      {/* <Header title="PRODUCTS" subtitle="See your list of products." />
-      {data || !isLoading ? (
-        <Box
-          mt="20px"
-          display="grid"
-          gridTemplateColumns="repeat(4, minmax(0, 1fr))"
-          justifyContent="space-between"
-          rowGap="20px"
-          columnGap="1.33%"
-          sx={{
-            "& > div": { gridColumn: isNonMobile ? undefined : "span 4" },
-          }}
-        >
-          {data.map(
-            ({
-              _id,
-              name,
-              description,
-              price,
-              rating,
-              category,
-              supply,
-              stat,
-            }) => (
-              <Product
-                key={_id}
-                _id={_id}
-                name={name}
-                description={description}
-                price={price}
-                rating={rating}
-                category={category}
-                supply={supply}
-                stat={stat}
-              />
-            )
-          )}
-        </Box>
-      ) : (
-        <>Loading...</>
-      )} */}
+      <Paper sx={{ height: 1000, width: '100%' }}>
+      <DataGrid
+        rows={rows}
+        columns={columns}
+        initialState={{ pagination: { paginationModel } }}
+        pageSizeOptions={[5, 10]}
+        checkboxSelection
+        sx={{ border: 0 }}
+      />
+    </Paper>
+     
     </Box>
   );
 };

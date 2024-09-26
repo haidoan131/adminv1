@@ -2,7 +2,7 @@ import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 import axios from 'axios';
 
 const BASE_URL = 'http://localhost:8080/api/admin/product/';
-const token = "eyJhbGciOiJIUzI1NiJ9.eyJ1c2VybmFtZSI6ImFkbWluIiwic3ViIjoiYWRtaW4iLCJleHAiOjE3MjczMjM2MzB9._Dqff0_DV9xL4ry7ql9e3QBhznnpd6Q8ZQ0W174i4wc"; // Đừng quên thay thế bằng token thực tế của bạn
+const token = "eyJhbGciOiJIUzI1NiJ9.eyJ1c2VybmFtZSI6ImFkbWluIiwic3ViIjoiYWRtaW4iLCJleHAiOjE3MjczMzc5ODJ9.Qj9JiAXi-GpWNlfGm4SzTFB0sVFGkvTCiULs26kTV1g"; // Đừng quên thay thế bằng token thực tế của bạn
 
 // Async Thunks
 export const getAllProducts = createAsyncThunk('products/getAll', async (thunkAPI) => {
@@ -52,29 +52,55 @@ export const deleteProduct = createAsyncThunk('products/delete', async (id, thun
     }
 });
 
+
 export const uploadProductImages = createAsyncThunk('products/uploadImages', async ({ id, files }, thunkAPI) => {
     const formData = new FormData();
-    for (let file of files) {
-        formData.append('files', file);
-    }
-
+    files.forEach(file => formData.append('files', file));
+    console.log(files)
     try {
         const response = await axios.post(`${BASE_URL}upload/${id}`, formData, {
+            
             headers: {
                 'Content-Type': 'multipart/form-data',
                 Authorization: `Bearer ${token}`
             }
         });
-        return response.data; // Trả về danh sách hình ảnh đã tải lên
+        return response.data;
     } catch (error) {
-        return thunkAPI.rejectWithValue(error.response.data);
+        return thunkAPI.rejectWithValue(error.response?.data || { message: "Failed to upload images" });
     }
 });
+
+export const getAllImagesForProduct = createAsyncThunk('products/getAllImages', async (id, thunkAPI) => {
+    try {
+        const response = await axios.get(`${BASE_URL}getAllImage/${id}`, {
+            headers: { Authorization: `Bearer ${token}` }
+        });
+        return response.data;
+    } catch (error) {
+        return thunkAPI.rejectWithValue(error.response?.data || { message: "Failed to fetch product images" });
+    }
+});
+
+export const viewImage = createAsyncThunk('products/viewImage', async (imageName, thunkAPI) => {
+    try {
+        const response = await axios.get(`${BASE_URL}images/${imageName}`, {
+            responseType: 'blob', // To handle image response
+            headers: { Authorization: `Bearer ${token}` }
+        });
+        return URL.createObjectURL(new Blob([response.data])); // Create a URL for the image blob
+    } catch (error) {
+        return thunkAPI.rejectWithValue(error.response?.data || { message: "Failed to fetch image" });
+    }
+});
+
+
 
 // Slice
 const productSlice = createSlice({
     name: 'products',
     initialState: {
+        images: [],
         items: [],
         status: 'idle', // 'idle' | 'loading' | 'succeeded' | 'failed'
         error: null,
@@ -124,11 +150,25 @@ const productSlice = createSlice({
             .addCase(deleteProduct.rejected, (state, action) => {
                 state.error = action.payload;
             })
+    
             .addCase(uploadProductImages.fulfilled, (state, action) => {
                 state.message = action.payload.message;
-                // Nếu cần cập nhật hình ảnh của sản phẩm, bạn có thể thêm logic ở đây
             })
             .addCase(uploadProductImages.rejected, (state, action) => {
+                state.error = action.payload;
+            })
+            .addCase(getAllImagesForProduct.fulfilled, (state, action) => {
+                console.log(state.images)
+                state.images = action.payload.data;
+            })
+            .addCase(getAllImagesForProduct.rejected, (state, action) => {
+                state.error = action.payload;
+            })
+            .addCase(viewImage.fulfilled, (state, action) => {
+                // This will return the image URL
+                // You can manage how to store/display it based on your application's requirements
+            })
+            .addCase(viewImage.rejected, (state, action) => {
                 state.error = action.payload;
             });
     }

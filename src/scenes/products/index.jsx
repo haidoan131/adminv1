@@ -17,15 +17,19 @@ import {
   InputLabel,
   Select,
   MenuItem,
+  ImageList,
+  ImageListItem,
 } from "@mui/material";
 import Header from "components/Header";
 import { useGetProductsQuery } from "state/api";
 import { DataGrid } from "@mui/x-data-grid";
 import { useDispatch, useSelector } from 'react-redux';
-import { getAllProducts ,resetStatusAndMessage ,addProduct,deleteProduct,updateProduct} from "redux/productSlice";
+import { getAllProducts ,resetStatusAndMessage ,addProduct,deleteProduct,updateProduct,uploadProductImages,getAllImagesForProduct} from "redux/productSlice";
 import { getAlll1} from '../../redux/cateSlice';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+import axios from "axios";
+import { createAsyncThunk } from "@reduxjs/toolkit";
 const Product = ({
   _id,
   name,
@@ -107,7 +111,7 @@ const Products = () => {
       dispatch(resetStatusAndMessage());
     };
   }, [dispatch]);
-  const { items, status, error } = useSelector((state) => state.products);
+  const { items, status, error ,images} = useSelector((state) => state.products);
   const { cates} = useSelector((state) => state.cate); 
 console.log(items)
   const { data, isLoading } = useGetProductsQuery();
@@ -120,9 +124,19 @@ console.log(items)
     {
       field: 'action',
       headerName: 'Actions',
-     flex:1,
+     flex:2,
       renderCell: (params) => (
         <div>
+          <Button
+            variant="contained"
+            color="primary"
+            onClick={() => handleUploadImages(params.row.id)}
+            style={{ marginRight: '10px' }}
+          >
+            Upload Images
+          </Button>
+
+
           <Button
             variant="contained"
             color="primary"
@@ -247,10 +261,141 @@ const handle_delete = (id) => {
     toast.success("Product updated successfully!");
   };
 
+//upload img
+const [imageFiles, setImageFiles] = useState([]);
+const [uploadModal, setUploadModal] = useState(false);
+const [selectedProduct, setSelectedProduct] = useState(null);
+const handleUploadImages = (productId) => {
+  const product = items.find(item => item.id === productId);
+  setSelectedProduct(product);
+  setUploadModal(true);
+};
 
+const handleUploadFiles = async (e) => {
+  const files = Array.from(e.target.files);
+  setImageFiles(files);
+};
+const handleSubmitImages = async () => {
+  if (selectedProduct) {
+    const formData = new FormData();
+    imageFiles.forEach(file => {
+      formData.append('files', file);
+    });
+    console.log(imageFiles)
+    await dispatch(uploadProductImages({ id: selectedProduct.id, files: imageFiles }));
+
+    dispatch(getAllImagesForProduct(selectedProduct.id));
+
+    setUploadModal(false);
+    toast.success("Images uploaded successfully!");
+  }
+};
+const itemData = [
+  {
+    img: 'https://images.unsplash.com/photo-1551963831-b3b1ca40c98e',
+    title: 'Breakfast',
+  },
+  {
+    img: 'https://images.unsplash.com/photo-1551782450-a2132b4ba21d',
+    title: 'Burger',
+  },
+  {
+    img: 'https://images.unsplash.com/photo-1522770179533-24471fcdba45',
+    title: 'Camera',
+  },
+  {
+    img: 'https://images.unsplash.com/photo-1444418776041-9c7e33cc5a9c',
+    title: 'Coffee',
+  },
+  {
+    img: 'https://images.unsplash.com/photo-1533827432537-70133748f5c8',
+    title: 'Hats',
+  },
+  {
+    img: 'https://images.unsplash.com/photo-1558642452-9d2a7deb7f62',
+    title: 'Honey',
+  },
+  {
+    img: 'https://images.unsplash.com/photo-1516802273409-68526ee1bdd6',
+    title: 'Basketball',
+  },
+  {
+    img: 'https://images.unsplash.com/photo-1518756131217-31eb79b20e8f',
+    title: 'Fern',
+  },
+  {
+    img: 'https://images.unsplash.com/photo-1597645587822-e99fa5d45d25',
+    title: 'Mushrooms',
+  },
+  {
+    img: 'https://images.unsplash.com/photo-1567306301408-9b74779a11af',
+    title: 'Tomato basil',
+  },
+  {
+    img: 'https://images.unsplash.com/photo-1471357674240-e1a485acb3e1',
+    title: 'Sea star',
+  },
+  {
+    img: 'https://images.unsplash.com/photo-1589118949245-7d38baf380d6',
+    title: 'Bike',
+  },
+];
+//get img
+const token = "eyJhbGciOiJIUzI1NiJ9.eyJ1c2VybmFtZSI6ImFkbWluIiwic3ViIjoiYWRtaW4iLCJleHAiOjE3MjczMzc5ODJ9.Qj9JiAXi-GpWNlfGm4SzTFB0sVFGkvTCiULs26kTV1g";
+const [images1, setImages1] = useState({});
+const fetchImage = async (imageUrl) => {
+  try {
+      const response = await axios.get(`http://localhost:8080/api/v1/student/images/${imageUrl}`, {
+         headers: { Authorization: `Bearer ${token}` },
+          responseType: 'blob' // Đảm bảo phản hồi trả về là Blob
+      });
+      const imageObjectURL = URL.createObjectURL(response.data);
+
+      setImages1(prev => ({ ...prev, [imageUrl]: imageObjectURL }));
+  } catch (error) {
+      console.error("Error fetching image", error);
+  }
+};
+
+
+useEffect(() => {
+  if (images) {
+    images.forEach(item => {
+      fetchImage(item.image_url);
+      });
+  }
+}, [images,dispatch]);
 
   return (
     <Box m="1.5rem 2.5rem">
+
+      <Modal open={uploadModal} onClose={() => setUploadModal(false)}>
+        <Box sx={style}>
+          <Typography variant="h6">Upload Images for {selectedProduct?.name}</Typography>
+          <input type="file" multiple onChange={handleUploadFiles} />
+          <Button variant="contained" color="success" onClick={handleSubmitImages}>
+            Upload
+          </Button>
+          {selectedProduct?.images && selectedProduct.images.map((image, index) => (
+            <img key={index} src={image} alt={`Product ${selectedProduct.name} Image ${index + 1}`} style={{ width: '100%', marginTop: '10px' }} />
+          ))}
+   <ImageList sx={{ width: 500, height: 450 }} cols={3} rowHeight={164}>
+      {/* {images1.map((item) => ( */}
+        <ImageListItem >
+          <img
+           
+            src={`${images1.image_url}?w=164&h=164&fit=crop&auto=format`}
+           
+            loading="lazy"
+          />
+        </ImageListItem>
+      {/* ))} */}
+    </ImageList>
+
+        </Box>
+      </Modal>
+
+
            <Modal open={openEdit} onClose={handleCloseEdit}>
         <Box sx={style}>
           <form onSubmit={handleSubmitEdit}>

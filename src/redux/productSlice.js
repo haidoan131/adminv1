@@ -2,7 +2,7 @@ import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 import axios from 'axios';
 
 const BASE_URL = 'http://localhost:8080/api/admin/product/';
-const token = "eyJhbGciOiJIUzI1NiJ9.eyJ1c2VybmFtZSI6ImFkbWluIiwic3ViIjoiYWRtaW4iLCJleHAiOjE3MjczMzc5ODJ9.Qj9JiAXi-GpWNlfGm4SzTFB0sVFGkvTCiULs26kTV1g"; // Đừng quên thay thế bằng token thực tế của bạn
+const token = "eyJhbGciOiJIUzI1NiJ9.eyJ1c2VybmFtZSI6ImFkbWluIiwic3ViIjoiYWRtaW4iLCJleHAiOjE3MjczNDI4NzZ9.yw34bUUMIK3IsSNith_1IbBLioEBz_wJ__7XzeIxho0"; // Đừng quên thay thế bằng token thực tế của bạn
 
 // Async Thunks
 export const getAllProducts = createAsyncThunk('products/getAll', async (thunkAPI) => {
@@ -84,10 +84,13 @@ export const getAllImagesForProduct = createAsyncThunk('products/getAllImages', 
 
 export const viewImage = createAsyncThunk('products/viewImage', async (imageName, thunkAPI) => {
     try {
+       
         const response = await axios.get(`${BASE_URL}images/${imageName}`, {
             responseType: 'blob', // To handle image response
             headers: { Authorization: `Bearer ${token}` }
         });
+        console.log(response)
+
         return URL.createObjectURL(new Blob([response.data])); // Create a URL for the image blob
     } catch (error) {
         return thunkAPI.rejectWithValue(error.response?.data || { message: "Failed to fetch image" });
@@ -164,13 +167,15 @@ const productSlice = createSlice({
             .addCase(getAllImagesForProduct.rejected, (state, action) => {
                 state.error = action.payload;
             })
-            .addCase(viewImage.fulfilled, (state, action) => {
-                // This will return the image URL
-                // You can manage how to store/display it based on your application's requirements
-            })
-            .addCase(viewImage.rejected, (state, action) => {
-                state.error = action.payload;
-            });
+         
+
+             .addCase(viewImage.fulfilled, (state, action) => {
+            // Thêm URL ảnh vào state
+           // state.images.push(action.payload);
+        })
+        .addCase(viewImage.rejected, (state, action) => {
+            console.error("Error fetching image:", action.payload);
+        });
     }
 });
 

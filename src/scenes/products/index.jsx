@@ -24,7 +24,7 @@ import Header from "components/Header";
 import { useGetProductsQuery } from "state/api";
 import { DataGrid } from "@mui/x-data-grid";
 import { useDispatch, useSelector } from 'react-redux';
-import { getAllProducts ,resetStatusAndMessage ,addProduct,deleteProduct,updateProduct,uploadProductImages,getAllImagesForProduct} from "redux/productSlice";
+import { getAllProducts ,resetStatusAndMessage ,addProduct,deleteProduct,updateProduct,uploadProductImages,getAllImagesForProduct,viewImage} from "redux/productSlice";
 import { getAlll1} from '../../redux/cateSlice';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
@@ -265,10 +265,12 @@ const handle_delete = (id) => {
 const [imageFiles, setImageFiles] = useState([]);
 const [uploadModal, setUploadModal] = useState(false);
 const [selectedProduct, setSelectedProduct] = useState(null);
-const handleUploadImages = (productId) => {
+const handleUploadImages =async (productId) => {
   const product = items.find(item => item.id === productId);
   setSelectedProduct(product);
   setUploadModal(true);
+  await dispatch(getAllImagesForProduct(productId));
+  console.log(images)
 };
 
 const handleUploadFiles = async (e) => {
@@ -284,10 +286,12 @@ const handleSubmitImages = async () => {
     console.log(imageFiles)
     await dispatch(uploadProductImages({ id: selectedProduct.id, files: imageFiles }));
 
-    dispatch(getAllImagesForProduct(selectedProduct.id));
+   
 
     setUploadModal(false);
     toast.success("Images uploaded successfully!");
+
+    
   }
 };
 const itemData = [
@@ -341,13 +345,13 @@ const itemData = [
   },
 ];
 //get img
-const token = "eyJhbGciOiJIUzI1NiJ9.eyJ1c2VybmFtZSI6ImFkbWluIiwic3ViIjoiYWRtaW4iLCJleHAiOjE3MjczMzc5ODJ9.Qj9JiAXi-GpWNlfGm4SzTFB0sVFGkvTCiULs26kTV1g";
+const token = "eyJhbGciOiJIUzI1NiJ9.eyJ1c2VybmFtZSI6ImFkbWluIiwic3ViIjoiYWRtaW4iLCJleHAiOjE3MjczNDI4NzZ9.yw34bUUMIK3IsSNith_1IbBLioEBz_wJ__7XzeIxho0";
 const [images1, setImages1] = useState({});
 const fetchImage = async (imageUrl) => {
   try {
-      const response = await axios.get(`http://localhost:8080/api/v1/student/images/${imageUrl}`, {
-         headers: { Authorization: `Bearer ${token}` },
-          responseType: 'blob' // Đảm bảo phản hồi trả về là Blob
+      const response = await axios.get(`http://localhost:8080/api/admin/product/images/${imageUrl}`, {
+          responseType: 'blob' ,// Đảm bảo phản hồi trả về là Blob
+          headers: { Authorization: `Bearer ${token}` }
       });
       const imageObjectURL = URL.createObjectURL(response.data);
 
@@ -356,12 +360,12 @@ const fetchImage = async (imageUrl) => {
       console.error("Error fetching image", error);
   }
 };
-
-
 useEffect(() => {
   if (images) {
     images.forEach(item => {
-      fetchImage(item.image_url);
+        
+        dispatch(viewImage(item.image_url));
+          console.log(item.image_url)
       });
   }
 }, [images,dispatch]);
@@ -380,16 +384,16 @@ useEffect(() => {
             <img key={index} src={image} alt={`Product ${selectedProduct.name} Image ${index + 1}`} style={{ width: '100%', marginTop: '10px' }} />
           ))}
    <ImageList sx={{ width: 500, height: 450 }} cols={3} rowHeight={164}>
-      {/* {images1.map((item) => ( */}
-        <ImageListItem >
-          <img
-           
-            src={`${images1.image_url}?w=164&h=164&fit=crop&auto=format`}
-           
-            loading="lazy"
-          />
-        </ImageListItem>
-      {/* ))} */}
+   {images.map((item) => (
+    <ImageListItem key={item.img}>
+      <img
+  
+        src={item.image_url}
+      
+        loading="lazy"
+      />
+    </ImageListItem>
+  ))}
     </ImageList>
 
         </Box>

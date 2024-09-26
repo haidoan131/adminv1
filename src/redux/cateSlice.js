@@ -6,7 +6,7 @@ import axios from 'axios';
 const BASE_URL = 'http://localhost:8080/api/admin/cate/';
 
 
-const token = "eyJhbGciOiJIUzI1NiJ9.eyJ1c2VybmFtZSI6ImFkbWluIiwic3ViIjoiYWRtaW4iLCJleHAiOjE3MjcyNjA2MjV9.fRMOjtc8deS0MgOzwbRd96OjHhINgFj8m2iyNqTRWjE";
+const token = "eyJhbGciOiJIUzI1NiJ9.eyJ1c2VybmFtZSI6ImFkbWluIiwic3ViIjoiYWRtaW4iLCJleHAiOjE3MjczMjM2MzB9._Dqff0_DV9xL4ry7ql9e3QBhznnpd6Q8ZQ0W174i4wc";
 export const getAlll1 = createAsyncThunk("cate/getAlll1", async ( thunkAPI) => {
     
     const url = BASE_URL;

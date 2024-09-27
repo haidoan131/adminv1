@@ -325,6 +325,7 @@ const handleSubmitImages = async () => {
 
       <Modal open={uploadModal} onClose={() => setUploadModal(false)}>
         <Box sx={style}>
+        <h1>Update Image Product</h1>
           <Typography variant="h6">Upload Images for {selectedProduct?.name}</Typography>
           <input type="file" multiple onChange={handleUploadFiles} />
           <Button variant="contained" color="success" onClick={handleSubmitImages}>
@@ -333,7 +334,7 @@ const handleSubmitImages = async () => {
           {selectedProduct?.images && selectedProduct.images.map((image, index) => (
             <img key={index} src={image} alt={`Product ${selectedProduct.name} Image ${index + 1}`} style={{ width: '100%', marginTop: '10px' }} />
           ))}
-   <ImageList sx={{ width: 500, height: 450 }} cols={3} rowHeight={164}>
+   {/* <ImageList sx={{ width: 500, height: 450 }} cols={3} rowHeight={164}>
    {images && images.map((item) => (
     <ImageListItem key={item.img}>
       <img
@@ -344,19 +345,31 @@ const handleSubmitImages = async () => {
       />
     </ImageListItem>
   ))}
+    </ImageList> */}
+    <ImageList sx={{ width: '100%', height: '100%' }} cols={3} rowHeight={164}>
+      { images && images.map((item) => (
+        <ImageListItem key={item.img}>
+          <img
+            srcSet={`http://localhost:8080/api/admin/product/images/${item.imageUrl}?w=164&h=164&fit=crop&auto=format&dpr=2 2x`}
+            src={`http://localhost:8080/api/admin/product/images/${item.imageUrl}?w=164&h=164&fit=crop&auto=format`}
+            alt={item.title}
+            loading="lazy"
+          />
+        </ImageListItem>
+      ))}
     </ImageList>
-
         </Box>
       </Modal>
 
 
            <Modal open={openEdit} onClose={handleCloseEdit}>
         <Box sx={style}>
+          <h1>Update Product</h1>
           <form onSubmit={handleSubmitEdit}>
-            <TextField fullWidth label="Name" variant="outlined" name="name" value={newProduct.name} onChange={handleInputChange} />
-            <TextField fullWidth label="Price" variant="outlined" name="price" type="number" value={newProduct.price} onChange={handleInputChange} />
-            <TextField fullWidth label="Description" variant="outlined" name="description" value={newProduct.description} onChange={handleInputChange} />
-            <FormControl fullWidth>
+            <TextField fullWidth label="Name" variant="outlined" name="name" value={newProduct.name} onChange={handleInputChange}  sx={{ m: 1 }} />
+            <TextField fullWidth label="Price" variant="outlined" name="price" type="number" value={newProduct.price} onChange={handleInputChange}  sx={{ m: 1 }} />
+            <TextField fullWidth label="Description" variant="outlined" name="description" value={newProduct.description} onChange={handleInputChange}  sx={{ m: 1 }}/>
+            <FormControl fullWidth  sx={{ m: 1 }}>
               <InputLabel>Category</InputLabel>
               <Select name="category" value={newProduct.category.id} onChange={handleInputChange}>
                 {cates.map(cate => (
@@ -376,6 +389,7 @@ const handleSubmitImages = async () => {
         aria-describedby="modal-modal-description"
       >
          <Box sx={{ position: 'absolute', top: '50%', left: '50%', transform: 'translate(-50%, -50%)', width: 400, bgcolor: 'background.paper', border: '2px solid #000', boxShadow: 24, p: 4 }}>
+         <h1>Add Product</h1>
           <form onSubmit={handleSubmit}>
             <TextField
               fullWidth

@@ -250,6 +250,7 @@ const style2 = {
           {/* Modal for Updating Category */}
           <Modal open={updateOpen} onClose={handleUpdateClose}>
         <Box sx={style}>
+        <h1>Update Category</h1>
           <TextField fullWidth label="Update Name" variant="outlined" value={updateCateData?.name || ''} onChange={handleUpdateChange} />
           <Button type="submit" fullWidth variant="contained" onClick={handle_update}>
             Update Category
@@ -265,7 +266,7 @@ const style2 = {
         aria-describedby="modal-modal-description"
       >
         <Box sx={style}>
-        
+        <h1>Add Category</h1>
         <TextField fullWidth sx={{ m: 1 }} id="outlined-basic" label="name" variant="outlined"  name="name" value={cate.name}
         onChange={handleChange} />
           <Button

@@ -6,8 +6,7 @@ import { DataGrid } from "@mui/x-data-grid";
 
 const Customers = () => {
   const theme = useTheme();
-  const { data, isLoading } = useGetCustomersQuery();
-  console.log("data", data);
+
 
   const columns = [
     {
@@ -49,6 +48,98 @@ const Customers = () => {
       flex: 0.5,
     },
   ];
+  const rows = [
+    {
+      _id: "1",
+      name: "Nguyễn Văn A",
+      email: "a@example.com",
+      phoneNumber: "0901234567",
+      country: "Vietnam",
+      occupation: "Engineer",
+      role: "User",
+    },
+    {
+      _id: "2",
+      name: "Trần Thị B",
+      email: "b@example.com",
+      phoneNumber: "0912345678",
+      country: "Vietnam",
+      occupation: "Designer",
+      role: "Admin",
+    },
+    {
+      _id: "3",
+      name: "Lê Văn C",
+      email: "c@example.com",
+      phoneNumber: "0923456789",
+      country: "Vietnam",
+      occupation: "Manager",
+      role: "User",
+    },
+    {
+      _id: "4",
+      name: "Phạm Thị D",
+      email: "d@example.com",
+      phoneNumber: "0934567890",
+      country: "Vietnam",
+      occupation: "Developer",
+      role: "User",
+    },
+    {
+      _id: "5",
+      name: "Nguyễn Văn E",
+      email: "e@example.com",
+      phoneNumber: "0945678901",
+      country: "Vietnam",
+      occupation: "Marketer",
+      role: "User",
+    },
+    {
+      _id: "6",
+      name: "Trần Thị F",
+      email: "f@example.com",
+      phoneNumber: "0956789012",
+      country: "Vietnam",
+      occupation: "Analyst",
+      role: "Admin",
+    },
+    {
+      _id: "7",
+      name: "Lê Văn G",
+      email: "g@example.com",
+      phoneNumber: "0967890123",
+      country: "Vietnam",
+      occupation: "Sales",
+      role: "User",
+    },
+    {
+      _id: "8",
+      name: "Phạm Thị H",
+      email: "h@example.com",
+      phoneNumber: "0978901234",
+      country: "Vietnam",
+      occupation: "Support",
+      role: "User",
+    },
+    {
+      _id: "9",
+      name: "Nguyễn Văn I",
+      email: "i@example.com",
+      phoneNumber: "0989012345",
+      country: "Vietnam",
+      occupation: "HR",
+      role: "Admin",
+    },
+    {
+      _id: "10",
+      name: "Trần Thị J",
+      email: "j@example.com",
+      phoneNumber: "0990123456",
+      country: "Vietnam",
+      occupation: "Consultant",
+      role: "User",
+    },
+  ];
 
   return (
     <Box m="1.5rem 2.5rem">
@@ -82,9 +173,9 @@ const Customers = () => {
         }}
       >
         <DataGrid
-          loading={isLoading || !data}
+         
           getRowId={(row) => row._id}
-          rows={data || []}
+          rows={rows}
           columns={columns}
         />
       </Box>

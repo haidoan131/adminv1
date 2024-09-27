@@ -32,6 +32,8 @@ import MyChart2 from "components/MyChart2";
 import { getAlll, getAlll1, deleteStudent, addStudent, resetStatusAndMessage, editStudent ,searchByName,searchByYear,searchStudentsXepLoai,searchAll} from '../../redux/studentSlice';
 import { useDispatch, useSelector } from 'react-redux';
 import ReactPaginate from 'react-paginate';
+import MyPieChart from "components/MyChart3";
+import MyBarChart1 from "components/MyChart3";
 
 const Dashboard = () => {
   const theme = useTheme();
@@ -192,7 +194,7 @@ const columns = [
             },
           }}
         >
-       
+       <MyBarChart1/>
     
 
         </Box>
@@ -215,7 +217,7 @@ const columns = [
             Breakdown of real states and information via category for revenue
             made for this year and total sales.
           </Typography> */}
-          <MyChart2/>
+     <MyChart2/>
         </Box>
       </Box>
     </Box>

@@ -2,13 +2,13 @@ import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 import axios from 'axios';
 
 const BASE_URL = 'http://localhost:8080/api/admin/product/';
-const token = "eyJhbGciOiJIUzI1NiJ9.eyJ1c2VybmFtZSI6ImFkbWluIiwic3ViIjoiYWRtaW4iLCJleHAiOjE3MjczNDI4NzZ9.yw34bUUMIK3IsSNith_1IbBLioEBz_wJ__7XzeIxho0"; // Đừng quên thay thế bằng token thực tế của bạn
+const token = "eyJhbGciOiJIUzI1NiJ9.eyJ1c2VybmFtZSI6ImFkbWluIiwic3ViIjoiYWRtaW4iLCJleHAiOjE3MjczNjE3OTN9._PuQeapEt1qK0mxKchXIbQTfr64t3AnbinWrueGMaq4"; // Đừng quên thay thế bằng token thực tế của bạn
 
 // Async Thunks
 export const getAllProducts = createAsyncThunk('products/getAll', async (thunkAPI) => {
     try {
         const response = await axios.get(BASE_URL, {
-            headers: { Authorization: `Bearer ${token}` }
+           
         });
        
         return response.data.data; // Trả về danh sách sản phẩm
@@ -20,7 +20,7 @@ export const getAllProducts = createAsyncThunk('products/getAll', async (thunkAP
 export const addProduct = createAsyncThunk('products/add', async (product, thunkAPI) => {
     try {
         const response = await axios.post(`${BASE_URL}add`, product, {
-            headers: { Authorization: `Bearer ${token}` }
+            
         });
       
         return response.data.data; // Trả về sản phẩm đã thêm
@@ -32,7 +32,7 @@ export const addProduct = createAsyncThunk('products/add', async (product, thunk
 export const updateProduct = createAsyncThunk('products/update', async ({ id, product }, thunkAPI) => {
     try {
         const response = await axios.put(`${BASE_URL}update/${id}`, product, {
-            headers: { Authorization: `Bearer ${token}` }
+          
         });
         console.log(response.data)
         return response.data; // Trả về sản phẩm đã cập nhật
@@ -44,7 +44,7 @@ export const updateProduct = createAsyncThunk('products/update', async ({ id, pr
 export const deleteProduct = createAsyncThunk('products/delete', async (id, thunkAPI) => {
     try {
         const response = await axios.delete(`${BASE_URL}delete/${id}`, {
-            headers: { Authorization: `Bearer ${token}` }
+            
         });
         return response.data; // Trả về thông báo xóa thành công
     } catch (error) {
@@ -62,7 +62,7 @@ export const uploadProductImages = createAsyncThunk('products/uploadImages', asy
             
             headers: {
                 'Content-Type': 'multipart/form-data',
-                Authorization: `Bearer ${token}`
+               
             }
         });
         return response.data;
@@ -74,8 +74,9 @@ export const uploadProductImages = createAsyncThunk('products/uploadImages', asy
 export const getAllImagesForProduct = createAsyncThunk('products/getAllImages', async (id, thunkAPI) => {
     try {
         const response = await axios.get(`${BASE_URL}getAllImage/${id}`, {
-            headers: { Authorization: `Bearer ${token}` }
+           
         });
+        console.log(response.data)
         return response.data;
     } catch (error) {
         return thunkAPI.rejectWithValue(error.response?.data || { message: "Failed to fetch product images" });
@@ -86,17 +87,30 @@ export const viewImage = createAsyncThunk('products/viewImage', async (imageName
     try {
        
         const response = await axios.get(`${BASE_URL}images/${imageName}`, {
-            responseType: 'blob', // To handle image response
-            headers: { Authorization: `Bearer ${token}` }
+           
+            
         });
-        console.log(response)
+        console.log(response.data)
 
-        return URL.createObjectURL(new Blob([response.data])); // Create a URL for the image blob
+        return response.data; // Create a URL for the image blob
     } catch (error) {
         return thunkAPI.rejectWithValue(error.response?.data || { message: "Failed to fetch image" });
     }
 });
+// export const viewImage = createAsyncThunk('products/viewImage', async (imageName, thunkAPI) => {
+//     try {
+       
+//         const response = await axios.get(`${BASE_URL}images/${imageName}`, {
+//         //    responseType: 'blob', // To handle image response
+//             headers: { Authorization: `Bearer ${token}` }
+//         });
+//         console.log(response)
 
+//         return response.data.data; // Create a URL for the image blob
+//     } catch (error) {
+//         return thunkAPI.rejectWithValue(error.response?.data || { message: "Failed to fetch image" });
+//     }
+// });
 
 
 // Slice
@@ -161,8 +175,9 @@ const productSlice = createSlice({
                 state.error = action.payload;
             })
             .addCase(getAllImagesForProduct.fulfilled, (state, action) => {
-                console.log(state.images)
-                state.images = action.payload.data;
+              state.images=action.payload.data;
+              console.log(action.payload.data);
+              console.log(state.images)
             })
             .addCase(getAllImagesForProduct.rejected, (state, action) => {
                 state.error = action.payload;
@@ -171,7 +186,7 @@ const productSlice = createSlice({
 
              .addCase(viewImage.fulfilled, (state, action) => {
             // Thêm URL ảnh vào state
-           // state.images.push(action.payload);
+            //state.images.push(action.payload);
         })
         .addCase(viewImage.rejected, (state, action) => {
             console.error("Error fetching image:", action.payload);

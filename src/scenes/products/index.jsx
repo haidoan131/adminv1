@@ -265,12 +265,24 @@ const handle_delete = (id) => {
 const [imageFiles, setImageFiles] = useState([]);
 const [uploadModal, setUploadModal] = useState(false);
 const [selectedProduct, setSelectedProduct] = useState(null);
+
 const handleUploadImages =async (productId) => {
+ 
   const product = items.find(item => item.id === productId);
   setSelectedProduct(product);
   setUploadModal(true);
-  await dispatch(getAllImagesForProduct(productId));
-  console.log(images)
+ // await dispatch(getAllImagesForProduct(productId));
+
+  const resultAction = await dispatch(getAllImagesForProduct(productId));
+    
+  if (getAllImagesForProduct.fulfilled.match(resultAction)) {
+      console.log("Images fetched successfully:", resultAction.payload.data);
+  } else {
+      console.error("Failed to fetch images:", resultAction.error);
+  }
+
+  
+ 
 };
 
 const handleUploadFiles = async (e) => {
@@ -294,81 +306,19 @@ const handleSubmitImages = async () => {
     
   }
 };
-const itemData = [
-  {
-    img: 'https://images.unsplash.com/photo-1551963831-b3b1ca40c98e',
-    title: 'Breakfast',
-  },
-  {
-    img: 'https://images.unsplash.com/photo-1551782450-a2132b4ba21d',
-    title: 'Burger',
-  },
-  {
-    img: 'https://images.unsplash.com/photo-1522770179533-24471fcdba45',
-    title: 'Camera',
-  },
-  {
-    img: 'https://images.unsplash.com/photo-1444418776041-9c7e33cc5a9c',
-    title: 'Coffee',
-  },
-  {
-    img: 'https://images.unsplash.com/photo-1533827432537-70133748f5c8',
-    title: 'Hats',
-  },
-  {
-    img: 'https://images.unsplash.com/photo-1558642452-9d2a7deb7f62',
-    title: 'Honey',
-  },
-  {
-    img: 'https://images.unsplash.com/photo-1516802273409-68526ee1bdd6',
-    title: 'Basketball',
-  },
-  {
-    img: 'https://images.unsplash.com/photo-1518756131217-31eb79b20e8f',
-    title: 'Fern',
-  },
-  {
-    img: 'https://images.unsplash.com/photo-1597645587822-e99fa5d45d25',
-    title: 'Mushrooms',
-  },
-  {
-    img: 'https://images.unsplash.com/photo-1567306301408-9b74779a11af',
-    title: 'Tomato basil',
-  },
-  {
-    img: 'https://images.unsplash.com/photo-1471357674240-e1a485acb3e1',
-    title: 'Sea star',
-  },
-  {
-    img: 'https://images.unsplash.com/photo-1589118949245-7d38baf380d6',
-    title: 'Bike',
-  },
-];
-//get img
-const token = "eyJhbGciOiJIUzI1NiJ9.eyJ1c2VybmFtZSI6ImFkbWluIiwic3ViIjoiYWRtaW4iLCJleHAiOjE3MjczNDI4NzZ9.yw34bUUMIK3IsSNith_1IbBLioEBz_wJ__7XzeIxho0";
-const [images1, setImages1] = useState({});
-const fetchImage = async (imageUrl) => {
-  try {
-      const response = await axios.get(`http://localhost:8080/api/admin/product/images/${imageUrl}`, {
-          responseType: 'blob' ,// Đảm bảo phản hồi trả về là Blob
-          headers: { Authorization: `Bearer ${token}` }
-      });
-      const imageObjectURL = URL.createObjectURL(response.data);
 
-      setImages1(prev => ({ ...prev, [imageUrl]: imageObjectURL }));
-  } catch (error) {
-      console.error("Error fetching image", error);
-  }
-};
-useEffect(() => {
-  if (images) {
-    images.forEach(item => {
+//get img
+
+// useEffect(() => {
+//   if (images) {
+//     images.forEach(item => {
         
-        dispatch(viewImage(item.image_url));
-          console.log(item.image_url)
-      });
-  }
-}, [images,dispatch]);
+//         dispatch(viewImage(item.image_url));
+//           console.log(item.image_url)
+//       });
+//   }
+// }, [images,dispatch]);
+
 
   return (
     <Box m="1.5rem 2.5rem">
@@ -384,11 +334,11 @@ useEffect(() => {
             <img key={index} src={image} alt={`Product ${selectedProduct.name} Image ${index + 1}`} style={{ width: '100%', marginTop: '10px' }} />
           ))}
    <ImageList sx={{ width: 500, height: 450 }} cols={3} rowHeight={164}>
-   {images.map((item) => (
+   {images && images.map((item) => (
     <ImageListItem key={item.img}>
       <img
   
-        src={item.image_url}
+        src={`http://localhost:8080/api/admin/product/images/${item.imageUrl}`}
       
         loading="lazy"
       />

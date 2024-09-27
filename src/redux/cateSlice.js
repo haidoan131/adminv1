@@ -6,16 +6,14 @@ import axios from 'axios';
 const BASE_URL = 'http://localhost:8080/api/admin/cate/';
 
 
-const token = "eyJhbGciOiJIUzI1NiJ9.eyJ1c2VybmFtZSI6ImFkbWluIiwic3ViIjoiYWRtaW4iLCJleHAiOjE3MjczNDI4NzZ9.yw34bUUMIK3IsSNith_1IbBLioEBz_wJ__7XzeIxho0";
+const token = "eyJhbGciOiJIUzI1NiJ9.eyJ1c2VybmFtZSI6ImFkbWluIiwic3ViIjoiYWRtaW4iLCJleHAiOjE3MjczNjE3OTN9._PuQeapEt1qK0mxKchXIbQTfr64t3AnbinWrueGMaq4";
 export const getAlll1 = createAsyncThunk("cate/getAlll1", async ( thunkAPI) => {
     
     const url = BASE_URL;
     console.log(token)
     try {
         const response = await axios.get(url, {
-            headers: {
-                Authorization: `Bearer ${token}` // Thêm token vào header
-            }
+         
         });
         console.log(response.data);
         return response.data; // Trả về dữ liệu từ API
@@ -28,9 +26,7 @@ export const addNew= createAsyncThunk('cate/addNew', async (cate,thunkAPI) => {
     const url= BASE_URL+`add`;
     try {
       const response = await axios.post(url, cate,{
-        headers: {
-            Authorization: `Bearer ${token}` // Thêm token vào header
-        }
+       
       });
       return response.data; // Trả về dữ liệu từ phản hồi
     } catch (error) {
@@ -42,9 +38,7 @@ export const addNew= createAsyncThunk('cate/addNew', async (cate,thunkAPI) => {
     const url= BASE_URL+`delete/${id}`;
    try {
      const response = await axios.delete(url,{
-        headers: {
-            Authorization: `Bearer ${token}` // Thêm token vào header
-        }
+        
       });
      return response.data; // Trả về dữ liệu từ phản hồi
    } catch (error) {
@@ -57,9 +51,7 @@ export const addNew= createAsyncThunk('cate/addNew', async (cate,thunkAPI) => {
     try {
    
       const response = await axios.put(url,cate,{
-        headers: {
-            Authorization: `Bearer ${token}` // Thêm token vào header
-        }
+        
       });
       return response.data; // Trả về dữ liệu từ phản hồi
     } catch (error) {
